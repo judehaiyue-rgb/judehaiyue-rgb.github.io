@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.hb789.info/sitemap.xml
