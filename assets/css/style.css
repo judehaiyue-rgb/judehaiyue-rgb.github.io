@@ -185,6 +185,8 @@ header { padding: 0 28px; }
 @media (max-width: 600px) { .biz-grid, .biz-grid.cols-2, .biz-grid.cols-4 { grid-template-columns: 1fr; } }
 
 /* ========== ABOUT-style quote card ========== */
+.trust-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.trust-grid > * { min-width: 0; }
 .about-big-card { background: var(--ink); border-radius: var(--r-xl); padding: 52px 48px; color: #fff; position: relative; overflow: hidden; }
 .about-big-card::before { content:''; position:absolute; top:-80px; right:-80px; width:250px; height:250px; border-radius:50%; background:radial-gradient(circle, rgba(249,115,22,.2) 0%, transparent 70%); }
 .about-big-card .quote-mark { font-family: Georgia, serif; font-size: 6rem; color: var(--orange); opacity: .3; line-height: 1; margin-bottom: -16px; display: block; position: relative; z-index: 1; }
@@ -339,23 +341,16 @@ footer { background: var(--orange-dark); color: rgba(255,255,255,.85); padding: 
 .svc-cta { background: var(--gray-100); padding: 30px 52px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
 @media (max-width: 900px) { .svc-body { grid-template-columns: 1fr; padding: 60px 24px; } }
 
-/* -- 導入事例カード -- */
-.case-card { display: grid; grid-template-columns: 260px 1fr; gap: 30px; border: 1px solid rgba(0,0,0,.08); border-radius: var(--r-lg); padding: 30px; box-shadow: var(--sh-sm); background: var(--white); }
-.case-photo { aspect-ratio: 4/3; background: var(--gray-100); border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; color: var(--gray-500); font-size: .74rem; text-align: center; padding: 12px; }
-.case-tag { display: inline-block; background: var(--orange-pale); color: var(--orange-mid); font-size: .68rem; font-weight: 700; padding: 4px 12px; border-radius: 50px; margin-bottom: 10px; }
-.case-card h3 { font-family: var(--font-head); font-size: 1.15rem; margin-bottom: 4px; }
-.case-loc { font-size: .76rem; color: var(--gray-500); margin-bottom: 16px; }
-.case-quote { font-family: var(--font-head); font-size: .9rem; color: var(--ink-mid); line-height: 1.9; position: relative; padding-left: 24px; margin-bottom: 20px; }
-.case-quote::before { content: '\201C'; position: absolute; left: -2px; top: -8px; font-family: Georgia, serif; font-size: 2.6rem; color: var(--orange-pale); }
-.case-compare { display: flex; align-items: center; gap: 18px; background: var(--cream); border-radius: var(--r-sm); padding: 16px 20px; max-width: 420px; }
-.case-compare .c { text-align: center; flex: 1; }
-.case-compare .l { font-size: .66rem; color: var(--gray-500); letter-spacing: .05em; margin-bottom: 4px; }
-.case-compare .v { font-family: var(--font-num); font-weight: 900; font-size: 1.35rem; }
-.case-compare .v.before { color: var(--gray-500); }
-.case-compare .v.after { color: var(--orange-mid); }
-.case-compare .arrow { color: var(--orange); font-size: 1.3rem; font-weight: 900; }
-.case-list { display: flex; flex-direction: column; gap: 24px; }
-@media (max-width: 720px) { .case-card { grid-template-columns: 1fr; } .case-photo { aspect-ratio: 16/9; } }
+/* -- 導入実績テーブル -- */
+.record-table { border: 1px solid rgba(0,0,0,.08); border-radius: var(--r-lg); overflow: hidden; margin-top: 24px; }
+.record-row { display: grid; grid-template-columns: 2fr 1fr 1.4fr; gap: 12px; padding: 16px 22px; border-bottom: 1px solid rgba(0,0,0,.06); align-items: center; }
+.record-row:last-child { border-bottom: none; }
+.record-head { background: var(--gray-100); font-size: .72rem; font-weight: 700; color: var(--gray-500); letter-spacing: .04em; }
+.record-facility { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--ink-mid); font-size: .9rem; }
+.record-facility svg { width: 16px; height: 16px; color: var(--orange-mid); flex-shrink: 0; }
+.record-head .record-facility svg { display: none; }
+.record-pref, .record-waste { font-size: .84rem; color: var(--gray-700); }
+@media (max-width: 640px) { .record-row { grid-template-columns: 1fr; gap: 4px; padding: 14px 18px; } .record-pref::before { content: '都道府県: '; color: var(--gray-500); } .record-waste::before { content: '処理対象: '; color: var(--gray-500); } .record-head { display: none; } }
 
 /* -- FAQ -- */
 .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 760px; margin: 0 auto; }
@@ -432,4 +427,6 @@ details > summary::-webkit-details-marker { display: none; }
   .stat-n { font-size: 1.8rem; }
   .svc-cta { flex-direction: column; }
   .svc-cta .btn { width: 100%; justify-content: center; }
+  .trust-grid { grid-template-columns: 1fr; gap: 32px; }
+  .about-big-card { padding: 36px 28px; }
 }

@@ -59,11 +59,7 @@ NAV = [
         ("製炭事業", "/carbonization/charcoal/"),
         ("スポンサー募集", "/carbonization/sponsor/"),
     ]},
-    {"label": "導入事例", "href": "/case-studies/", "children": [
-        ("医療法人・社会福祉法人の導入事例", "/case-studies/medical-welfare/"),
-        ("乾熱滅菌減量装置 導入事例", "/case-studies/sterilizer/"),
-        ("製炭事業 導入事例", "/case-studies/charcoal/"),
-    ]},
+    {"label": "導入事例", "href": "/case-studies/", "children": []},
     {"label": "メディア・スポンサー", "href": "/media/", "children": [
         ("メディア", "/media/press/"),
         ("スポンサーを務めてる選手・団体", "/media/sponsorship/"),
@@ -103,6 +99,9 @@ FOOTER_LINKS = [
 def header_html():
     items = []
     for sec in NAV:
+        if not sec["children"]:
+            items.append('<div class="gnav-item"><a href="%s">%s</a></div>' % (sec["href"], sec["label"]))
+            continue
         subs = "".join('<a href="%s">%s</a>' % (h, l) for l, h in sec["children"])
         items.append(
             '<div class="gnav-item"><button type="button">%s %s</button>'
@@ -112,6 +111,9 @@ def header_html():
 
     mobile_items = []
     for sec in NAV:
+        if not sec["children"]:
+            mobile_items.append('<a class="top-link" href="%s">%s</a>' % (sec["href"], sec["label"]))
+            continue
         subs = "".join('<a href="%s">%s</a>' % (h, l) for l, h in sec["children"])
         mobile_items.append(
             '<details><summary>%s %s</summary><div class="sub">%s</div></details>'
@@ -269,7 +271,7 @@ def build_top():
 </section>
 
 <section class="sec" style="background:var(--white);">
-  <div class="inner" style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+  <div class="inner trust-grid">
     <div>
       <span class="sec-label">Trust</span>
       <h2 class="sec-title">導入実績と、社会からの信頼。</h2>
@@ -493,7 +495,7 @@ def build_sterilizer():
        "紙おむつや感染性廃棄物を乾熱滅菌・減容化する装置です。病院・介護施設の廃棄物処理コストと処理量を大幅に削減します。",
        CRUMB_TOP + '<a href="/carbonization/">炭化炉事業</a> ／ 乾熱滅菌減量装置',
        '<a class="btn btn-orange" href="/contact/">資料請求はこちら →</a>'
-       '<a class="btn btn-ghost" href="/case-studies/sterilizer/">導入事例を見る</a>')}
+       '<a class="btn btn-ghost" href="/case-studies/">導入事例を見る</a>')}
 <div class="svc-body">
   <div>
     <h2>MD1000型 製品詳細</h2>
@@ -530,7 +532,7 @@ def build_charcoal():
        "生ごみや牡蠣殻など有機物を炭化し地域資源として循環させる製炭事業です。バイオ炭の活用方法・販売サイトのご案内もこちらでご紹介します。",
        CRUMB_TOP + '<a href="/carbonization/">炭化炉事業</a> ／ 製炭事業',
        '<a class="btn btn-orange" href="/contact/">資料請求はこちら →</a>'
-       '<a class="btn btn-ghost" href="/case-studies/charcoal/">導入事例を見る</a>')}
+       '<a class="btn btn-ghost" href="/case-studies/">導入事例を見る</a>')}
 <div class="svc-body">
   <div>
     <h2>有機物炭化炉と、炭の活用・販売サポート</h2>
@@ -623,97 +625,53 @@ def build_sponsor():
 # 導入事例
 # ---------------------------------------------------------------
 
-def case_card(tag, name, loc, quote, before, after, icon_name="checkcircle"):
+def record_row(facility, pref, waste):
     return f"""
-<div class="case-card">
-  <div class="case-photo">{icon(icon_name)}<br>写真：導入施設</div>
-  <div>
-    <span class="case-tag">{tag}</span>
-    <h3>{name}</h3>
-    <div class="case-loc">{loc}</div>
-    <p class="case-quote">{quote}</p>
-    <div class="case-compare">
-      <div class="c"><div class="l">導入前</div><div class="v before">{before}</div></div>
-      <div class="arrow">→</div>
-      <div class="c"><div class="l">導入後</div><div class="v after">{after}</div></div>
-    </div>
-  </div>
+<div class="record-row">
+  <div class="record-facility">{icon('checkcircle')}{facility}</div>
+  <div class="record-pref">{pref}</div>
+  <div class="record-waste">{waste}</div>
 </div>"""
 
 
 def build_case_hub():
+    records = [
+        ("総合病院", "北海道", "紙おむつ"),
+        ("病院", "新潟県", "紙おむつ"),
+        ("リハビリ病院", "千葉県", "紙おむつ"),
+        ("市立病院", "千葉県", "紙おむつ・脱脂綿"),
+        ("介護老人保健施設", "東京都", "紙おむつ・生ごみ"),
+        ("特別養護老人ホーム", "東京都", "紙おむつ"),
+        ("病院", "神奈川県", "紙おむつ・生ごみ"),
+        ("市立病院", "静岡県", "紙おむつ"),
+        ("検査会社", "京都府", "血液"),
+        ("中間処理業者", "鹿児島県", "紙おむつ"),
+    ]
+    rows = "".join(record_row(f, p, w) for f, p, w in records)
     body = f"""
-{mhero("Case Studies", "導入事例・<span style='color:var(--orange)'>お客様の声</span>",
-       "固定費削減コンサルと乾熱滅菌減量装置・製炭事業、それぞれの導入事例をご紹介。医療法人・社会福祉法人など幅広い実績があります。",
-       CRUMB_TOP + "導入事例・お客様の声",
+{mhero("Case Studies", "導入実績", "乾熱滅菌減量装置（MD1000型）の導入実績を一部抜粋してご紹介します。全国の病院・介護施設・検査会社等で稼働中です。",
+       CRUMB_TOP + "導入事例",
        '<a class="btn btn-orange" href="/contact/">無料相談する →</a>')}
 <section class="sec" style="background:var(--white);">
-  <div class="inner case-list">
-    {case_card("医療法人・社会福祉法人", "医療法人 恵和会 様", "大阪府 ／ 病床数120床の総合病院", "固定費削減コンサルの導入で、電気代・水道代・人件費をトータルで見直せました。", "月額 ¥420,000", "月額 ¥310,000", "coin")}
-    {case_card("乾熱滅菌減量装置", "社会福祉法人 のぞみ会 様", "大阪府 ／ 特別養護老人ホーム", "紙おむつの廃棄コストが想像以上に重荷でした。MD1000型の導入後は処理量が激減し、現場の負担も減りました。", "月額 ¥184,000", "月額 ¥97,500", "sun")}
-    {case_card("製炭事業", "農業生産法人 みどり農園 様", "熊本県 ／ 有機農業", "牡蠣殻由来の炭を土壌改良材として導入。地域資源循環をPRポイントにできました。", "廃棄物処理費 年間¥1,200,000", "炭化・再利用 年間¥350,000", "cycle")}
+  <div class="inner">
+    <span class="sec-label">Track Record</span>
+    <h2 class="sec-title">導入実績（抜粋）</h2>
+    <div class="record-table">
+      <div class="record-row record-head">
+        <div class="record-facility">施設種別</div>
+        <div class="record-pref">都道府県</div>
+        <div class="record-waste">処理対象</div>
+      </div>
+      {rows}
+    </div>
   </div>
-  <div class="inner" style="text-align:center;margin-top:16px;">
+  <div class="inner" style="text-align:center;margin-top:32px;">
     <a class="btn btn-orange" href="/contact/">同じような相談をしてみる →</a>
   </div>
 </section>
 """
-    return page("/case-studies/", "導入事例・お客様の声｜Heart Bridge",
-                "固定費削減コンサルと乾熱滅菌減量装置・製炭事業、それぞれの導入事例をご紹介。医療法人・社会福祉法人など幅広い実績があります。",
-                body)
-
-
-def build_case_medical():
-    body = f"""
-{mhero("Case Study", "医療法人・社会福祉法人の<span style='color:var(--orange)'>導入事例</span>",
-       "医療法人・社会福祉法人における固定費削減コンサルの導入事例をご紹介。電気代・水道代・人件費の削減実績と効果を具体的な数字で解説します。",
-       CRUMB_TOP + '<a href="/case-studies/">導入事例</a> ／ 医療法人・社会福祉法人',
-       '<a class="btn btn-orange" href="/contact/">無料相談する →</a>')}
-<section class="sec" style="background:var(--white);">
-  <div class="inner case-list">
-    {case_card("医療法人", "医療法人 恵和会 様", "大阪府 ／ 病床数120床の総合病院", "固定費削減コンサルの導入で、電気代・水道代・人件費をトータルで見直せました。専門家が入るだけでここまで変わるとは思いませんでした。", "月額 ¥420,000", "月額 ¥310,000", "coin")}
-    {case_card("社会福祉法人", "社会福祉法人 陽だまり会 様", "兵庫県 ／ 特別養護老人ホーム", "人員配置の見直しにより、現場の負担を増やさずに人件費を最適化できました。", "月間残業時間 180h", "月間残業時間 120h", "users")}
-  </div>
-</section>
-"""
-    return page("/case-studies/medical-welfare/", "医療法人・社会福祉法人の導入事例｜Heart Bridge",
-                "医療法人・社会福祉法人における固定費削減コンサルの導入事例をご紹介。電気代・水道代・人件費の削減実績と効果を具体的な数字で解説します。",
-                body)
-
-
-def build_case_sterilizer():
-    body = f"""
-{mhero("Case Study", "乾熱滅菌減量装置<br><span style='color:var(--orange)'>導入事例</span>",
-       "乾熱滅菌減量装置を導入した病院・介護施設の事例をご紹介。廃棄物処理量とコストの削減効果を具体的にご覧いただけます。",
-       CRUMB_TOP + '<a href="/case-studies/">導入事例</a> ／ 乾熱滅菌減量装置',
-       '<a class="btn btn-orange" href="/contact/">無料相談する →</a>')}
-<section class="sec" style="background:var(--white);">
-  <div class="inner case-list">
-    {case_card("特別養護老人ホーム", "社会福祉法人 のぞみ会 様", "大阪府", "紙おむつの廃棄コストが想像以上に重荷でした。MD1000型の導入後は処理量が激減し、現場の負担も減りました。", "月額 ¥184,000", "月額 ¥97,500", "sun")}
-    {case_card("総合病院", "医療法人 恵和会 様", "大阪府", "感染性廃棄物の処理を院内で完結できるようになり、外部委託費を大幅に削減できました。", "外部委託費 月額¥260,000", "外部委託費 月額¥90,000", "checkcircle")}
-  </div>
-</section>
-"""
-    return page("/case-studies/sterilizer/", "病院の廃棄物処理装置 導入事例｜Heart Bridge",
-                "乾熱滅菌減量装置を導入した病院・介護施設の事例をご紹介。廃棄物処理量とコストの削減効果を具体的にご覧いただけます。",
-                body)
-
-
-def build_case_charcoal():
-    body = f"""
-{mhero("Case Study", "製炭事業<br><span style='color:var(--orange)'>導入事例</span>",
-       "有機物炭化炉を活用した製炭事業の導入事例をご紹介。地域資源循環と就労支援を組み合わせた取り組みを紹介します。",
-       CRUMB_TOP + '<a href="/case-studies/">導入事例</a> ／ 製炭事業',
-       '<a class="btn btn-orange" href="/contact/">無料相談する →</a>')}
-<section class="sec" style="background:var(--white);">
-  <div class="inner case-list">
-    {case_card("農業生産法人", "農業生産法人 みどり農園 様", "熊本県", "牡蠣殻由来の炭を土壌改良材として導入。地域資源循環をPRポイントにできました。", "廃棄物処理費 年間¥1,200,000", "炭化・再利用 年間¥350,000", "cycle")}
-    {case_card("自治体連携", "◯◯市 環境課 様", "沖縄県", "生ごみの炭化処理により焼却量を削減。就労支援と連携した運用で地域雇用にも貢献しています。", "焼却量 月間8t", "焼却量 月間3t", "globe")}
-  </div>
-</section>
-"""
-    return page("/case-studies/charcoal/", "製炭事業の導入事例｜Heart Bridge",
-                "有機物炭化炉を活用した製炭事業の導入事例をご紹介。地域資源循環と就労支援を組み合わせた取り組みを紹介します。",
+    return page("/case-studies/", "導入実績｜株式会社Heart Bridge",
+                "乾熱滅菌減量装置（MD1000型）の導入実績を一部抜粋してご紹介します。全国の病院・介護施設・検査会社等で稼働中です。",
                 body)
 
 # ---------------------------------------------------------------
@@ -726,7 +684,7 @@ def build_media_hub():
        "株式会社Heart Bridgeのメディア掲載実績と、スポンサーとして応援している選手・団体をご紹介します。",
        CRUMB_TOP + "メディア・スポンサー")}
 <section class="sec" style="background:var(--white);">
-  <div class="inner" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+  <div class="inner pillars">
     <a class="pillar" href="/media/press/">
       <div class="pic">{icon('broadcast')}</div>
       <h3>メディア掲載情報</h3>
@@ -1093,9 +1051,6 @@ PAGES = {
     "carbonization/charcoal/index.html": build_charcoal,
     "carbonization/sponsor/index.html": build_sponsor,
     "case-studies/index.html": build_case_hub,
-    "case-studies/medical-welfare/index.html": build_case_medical,
-    "case-studies/sterilizer/index.html": build_case_sterilizer,
-    "case-studies/charcoal/index.html": build_case_charcoal,
     "media/index.html": build_media_hub,
     "media/press/index.html": build_media_press,
     "media/sponsorship/index.html": build_media_sponsorship,
@@ -1112,8 +1067,7 @@ URL_PATHS = [
     "/", "/cost-reduction/", "/cost-reduction/electricity/", "/cost-reduction/water/",
     "/cost-reduction/labor/", "/cost-reduction/office-equipment/", "/carbonization/",
     "/carbonization/sterilizer/", "/carbonization/charcoal/", "/carbonization/sponsor/",
-    "/case-studies/", "/case-studies/medical-welfare/", "/case-studies/sterilizer/",
-    "/case-studies/charcoal/", "/media/", "/media/press/", "/media/sponsorship/",
+    "/case-studies/", "/media/", "/media/press/", "/media/sponsorship/",
     "/sdgs/", "/company/", "/faq/", "/contact/", "/contact/thanks/", "/recruit/", "/policy/",
 ]
 
