@@ -4,6 +4,8 @@ Built from: GlooMaps sitemap, ディレクトリマップ本体（GlooMaps最新
 デザイン作成 指示書。Outputs plain HTML files under heartbridge-site/.
 """
 import os
+from content_cost import ELECTRICITY, WATER, LABOR, OFFICE
+from content_carbon import STERILIZER, CHARCOAL, SPONSOR, COST_HUB, CARBON_HUB
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://www.hb789.info"
@@ -215,36 +217,68 @@ CRUMB_TOP = '<a href="/">TOP</a> ／ '
 # ---------------------------------------------------------------
 
 def build_top():
+    quick = [
+        ("coin", "固定費削減コンサル", "電気・水道・人件費・OA機器", "/cost-reduction/"),
+        ("sun", "炭化炉事業", "乾熱滅菌・製炭", "/carbonization/"),
+        ("shield", "乾熱滅菌減量装置", "病院・介護施設向け", "/carbonization/sterilizer/"),
+        ("cycle", "製炭事業", "有機物炭化炉・バイオ炭", "/carbonization/charcoal/"),
+        ("checkcircle", "導入実績", "全国の病院・介護施設", "/case-studies/"),
+        ("heart", "スポンサー募集", "協賛・投資型フランチャイズ", "/carbonization/sponsor/"),
+        ("globe", "SDGsの取り組み", "事業を通じた貢献", "/sdgs/"),
+        ("mail", "お問い合わせ・資料請求", "2営業日以内にご連絡", "/contact/"),
+    ]
+    quick_html = "".join(
+        f'<a class="quick-item" href="{h}"><span class="qi">{icon(ic)}</span><div><b>{t}</b><span>{d}</span></div></a>'
+        for ic, t, d, h in quick
+    )
+    news = [
+        ("INTERVIEW", "経営者プライム", "炭と就労支援が繋ぐ社会貢献のかたち", "https://keieisha-prime.com/interview/1329/", False),
+        ("INTERVIEW", "SAMURAI CEO（社長メシ）", "「社会貢献」と「利益」の両立を追求。関わるすべての人を幸せにする仕組みをつくる", "https://www.samurai-ceo.jp/%E6%A0%AA%E5%BC%8F%E4%BC%9A%E7%A4%BEheart-bridge/", False),
+        ("VIDEO", "YouTube", "【営業で結果を出す秘訣】3年でトップセールスマンになった理由とは？株式会社Heart Bridge 髙橋社長が登場！！｜vol.367", "https://youtu.be/I_WG63tPyVM", True),
+        ("VIDEO", "YouTube", "【社会貢献×就労支援】炭で国内エネルギー循環を実現した新ビジネスの全貌に迫る！！｜vol.368", "https://youtu.be/FqkWwyqDRYk", True),
+        ("VIDEO", "YouTube", "未来の子供たちのための挑戦。世界展開も見据えている脱炭素事業とは？｜vol.369", "https://youtu.be/S-Ip2KT1uDo", True),
+    ]
+    news_html = "".join(
+        f'<a class="news-item" href="{h}" target="_blank" rel="noopener"><span class="news-tag{" v" if v else ""}">{tag}</span>'
+        f'<span class="news-ttl">{t}<small>{srcname}</small></span><span class="news-arrow">&rarr;</span></a>'
+        for tag, srcname, t, h, v in news
+    )
     body = f"""
 <section class="hero">
-  <div class="hero-grid-bg"></div><div class="hero-glow"></div><div class="hero-glow2"></div>
-  <div class="hero-eyebrow"><i></i><span>Decarbonization &amp; Wellbeing</span></div>
-  <h1 class="hero-catch">「捨てる」を<br>「<span class="accent">つなぐ</span>」に。</h1>
-  <p class="hero-desc">産廃を炭に変え、障がい者の雇用をつくり、人の心をケアする。環境・社会・人を橋でつなぐ、新しい形の事業を展開しています。</p>
-  <div class="hero-actions">
-    <a class="btn btn-orange" href="/cost-reduction/">固定費削減コンサルを見る {icon('check')}</a>
-    <a class="btn btn-ghost" href="/carbonization/">炭化炉事業を見る</a>
+  <div class="hero-grid-bg"></div><div class="hero-shape s2"></div><div class="hero-shape s1"></div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow"><i></i><span>Decarbonization &amp; Wellbeing</span></div>
+      <h1 class="hero-catch">「捨てる」を<br>「<span class="accent">つなぐ</span>」に。</h1>
+      <p class="hero-desc">産廃を炭に変え、障がい者の雇用をつくり、人の心をケアする。環境・社会・人を橋でつなぐ、新しい形の事業を展開しています。</p>
+      <div class="hero-actions">
+        <a class="btn btn-orange" href="/cost-reduction/">固定費削減コンサルを見る {icon('check')}</a>
+        <a class="btn btn-ghost" href="/carbonization/">炭化炉事業を見る</a>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <div class="ring"></div>
+      <div class="disc"><img src="/assets/img/hero.jpg" alt="乾熱滅菌減量装置"></div>
+      <div class="badge"><b>全国</b>の病院・介護施設で稼働中</div>
+    </div>
   </div>
-  <div class="hero-stats">
-    <div class="stat"><div class="stat-n">30<sup>%</sup></div><div class="stat-l">水道料金削減</div></div>
-    <div class="stat"><div class="stat-n">20<sup>%</sup></div><div class="stat-l">節電効果</div></div>
-    <div class="stat"><div class="stat-n">1,500<sup>+</sup></div><div class="stat-l">取引施設数</div></div>
-    <div class="stat"><div class="stat-n">2022</div><div class="stat-l">設立年</div></div>
-  </div>
+  <div class="hero-side">Heart Bridge Inc. all rights reserved.</div>
 </section>
 
-<div class="mission-strip"><div class="mission-strip-inner">
-  <h2>脱炭素と福祉を、一つの仕組みでつなぐ。</h2>
-  <p>産業廃棄物を炭に変える「炭化事業」と、障がい者の就労支援を組み合わせた投資型フランチャイズを展開しています。</p>
+<div class="quick"><div class="quick-inner">
+  <div class="quick-ttl">知りたいことから探す</div>
+  <div class="quick-grid">{quick_html}</div>
 </div></div>
 
-<section class="sec" style="background:var(--warm-bg);">
+<section class="sec" style="background:var(--warm-bg);padding-top:56px;">
   <div class="inner">
+    <span class="brace">{{ 事業内容 }}</span>
     <span class="sec-label">Our Business</span>
     <h2 class="sec-title">2つの軸で、企業と社会に貢献する。</h2>
-    <p class="sec-body" style="margin-bottom:44px;">固定費という「守り」のコスト削減と、炭化炉事業という「攻め」の新規事業。どちらも脱炭素・地域社会への貢献につながります。</p>
+    <p class="sec-body" style="margin-bottom:48px;">固定費という「守り」のコスト削減と、炭化炉事業という「攻め」の新規事業。どちらも脱炭素・地域社会への貢献につながります。</p>
     <div class="pillars">
-      <a class="pillar" href="/cost-reduction/">
+      <a class="pillar" data-no="01" href="/cost-reduction/">
+        <div class="pphoto" style="background:linear-gradient(135deg,var(--orange),var(--orange-mid));"></div>
         <div class="pic">{icon('coin')}</div>
         <h3>固定費削減コンサル</h3>
         <p>電気代・水道代・人件費・複合機コストまで、医療法人・社会福祉法人の固定費を専門家が無料診断。実績に基づいた経費見直しをワンストップでご提案します。</p>
@@ -255,12 +289,13 @@ def build_top():
         </ul>
         <span class="more">サービス詳細を見る →</span>
       </a>
-      <a class="pillar" href="/carbonization/">
+      <a class="pillar" data-no="02" href="/carbonization/">
+        <div class="pphoto" style="background-image:url('/assets/img/detail-a.jpg');"></div>
         <div class="pic">{icon('sun')}</div>
         <h3>炭化炉事業</h3>
         <p>医療産廃対応の乾熱滅菌減量装置と、有機物炭化炉による製炭事業。廃棄物処理コストの削減と、地域資源循環を同時に実現します。</p>
         <ul>
-          <li>{icon('check')} 乾熱滅菌減量装置（MD1000型）</li>
+          <li>{icon('check')} 乾熱滅菌減量装置</li>
           <li>{icon('check')} 有機物炭化炉・バイオ炭の活用</li>
           <li>{icon('check')} スポンサー・協賛の募集</li>
         </ul>
@@ -270,14 +305,33 @@ def build_top():
   </div>
 </section>
 
+<section class="stats-band">
+  <div class="stats-in">
+    <span class="brace">{{ 数字で見るHeart Bridge }}</span>
+    <h2>現場の声と実績に基づく、確かな削減効果。</h2>
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-n">30<sup>%</sup></div><div class="stat-l">水道料金削減</div><div class="stat-s">平均削減率の目安</div></div>
+      <div class="stat"><div class="stat-n">20<sup>%</sup></div><div class="stat-l">節電効果</div><div class="stat-s">平均削減率の目安</div></div>
+      <div class="stat"><div class="stat-n">1,500<sup>+</sup></div><div class="stat-l">取引施設数</div><div class="stat-s">医療・介護施設ほか</div></div>
+      <div class="stat"><div class="stat-n">2022</div><div class="stat-l">設立年</div><div class="stat-s">大阪府堺市</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="mission-strip"><div class="mission-strip-inner">
+  <h2>脱炭素と福祉を、一つの仕組みでつなぐ。</h2>
+  <p>産業廃棄物を炭に変える「炭化事業」と、障がい者の就労支援を組み合わせた投資型フランチャイズを展開しています。</p>
+</div></div>
+
 <section class="sec" style="background:var(--white);">
   <div class="inner trust-grid">
     <div>
+      <span class="brace">{{ 実績と信頼 }}</span>
       <span class="sec-label">Trust</span>
       <h2 class="sec-title">導入実績と、社会からの信頼。</h2>
-      <p class="sec-body" style="margin-bottom:28px;">医療法人・社会福祉法人など幅広い実績に加え、SDGs協会の正式会員として、メディア掲載やスポーツ・地域団体のスポンサーとしても活動しています。</p>
+      <p class="sec-body" style="margin-bottom:28px;">北海道から鹿児島県まで、全国の病院・介護施設で稼働。SDGs協会の正式会員として、メディア掲載やスポーツ・地域団体のスポンサーとしても活動しています。</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <a class="btn btn-ghost on-light" href="/case-studies/">導入事例を見る</a>
+        <a class="btn btn-ghost on-light" href="/case-studies/">導入実績を見る</a>
         <a class="btn btn-ghost on-light" href="/sdgs/">SDGsの取り組み</a>
         <a class="btn btn-ghost on-light" href="/media/">メディア・スポンサー</a>
       </div>
@@ -289,11 +343,25 @@ def build_top():
   </div>
 </section>
 
-<section class="sec" style="background:var(--ink);padding-bottom:80px;">
-  <div class="inner" style="text-align:center;">
+<section class="sec" style="background:var(--warm-bg);">
+  <div class="inner">
+    <div class="biz-header">
+      <div>
+        <span class="brace">{{ お知らせ・メディア }}</span>
+        <span class="sec-label" style="margin-bottom:0;">News</span>
+      </div>
+      <a class="btn btn-ghost on-light" href="/media/press/">メディア掲載一覧へ</a>
+    </div>
+    <div class="news-list">{news_html}</div>
+  </div>
+</section>
+
+<section class="sec" style="background:var(--ink);padding-bottom:84px;">
+  <div class="inner center">
+    <span class="brace" style="color:var(--orange);">{{ お問い合わせ }}</span>
     <span class="sec-label">Contact</span>
     <h2 class="sec-title sec-title-white">まずは、お気軽にご相談ください。</h2>
-    <p style="color:rgba(255,255,255,.55);font-size:.9rem;max-width:520px;margin:0 auto 32px;">炭化炉の導入・固定費の削減・スポンサーのご相談など、担当者より2営業日以内にご連絡いたします。</p>
+    <p style="color:rgba(255,255,255,.7);font-size:.92rem;max-width:520px;margin:0 auto 32px;">炭化炉の導入・固定費の削減・スポンサーのご相談など、担当者より2営業日以内にご連絡いたします。</p>
     <a class="btn btn-orange" href="/contact/">お問い合わせ・資料請求 →</a>
   </div>
 </section>
@@ -308,7 +376,7 @@ def build_top():
 
 def service_page(url, eyebrow, h1_html, hero_desc, crumbs, body_intro_title, body_intro,
                   feats, stats_label, stats, stat_note, cta_back_label, cta_back_href,
-                  extra_sections="", title="", description=""):
+                  extra_sections="", title="", description="", longform=""):
     feats_html = "".join(
         '<div class="svc-feat">%s<div><b>%s</b><span>%s</span></div></div>'
         % (icon(ic, "ic"), t, d) for ic, t, d in feats
@@ -333,6 +401,7 @@ def service_page(url, eyebrow, h1_html, hero_desc, crumbs, body_intro_title, bod
     {stats_html}
   </div>
 </div>
+{longform}
 <div class="svc-cta">
   <a class="btn btn-ghost on-light" href="{cta_back_href}">{cta_back_label}</a>
   <a class="btn btn-orange" href="/contact/">お問い合わせ・資料請求</a>
@@ -354,6 +423,7 @@ def build_electricity():
         "導入効果（実績）", [("平均削減率", "20", "%"), ("診断〜提案までの期間", "2", "週間"), ("初期費用", "0", "円")],
         "", "固定費削減コンサル一覧へ戻る", "/cost-reduction/",
         title="医療法人の電気代削減｜Heart Bridge",
+        longform=ELECTRICITY,
         description="病院・医療機関向けに高圧電力の契約見直しや電力会社の切替支援を実施。専門コンサルタントが電気代削減の具体策をご提案します。")
 
 
@@ -370,6 +440,7 @@ def build_water():
         "導入効果（実績）", [("平均削減率", "30", "%"), ("診断〜提案までの期間", "2", "週間"), ("初期費用", "0", "円")],
         "", "固定費削減コンサル一覧へ戻る", "/cost-reduction/",
         title="介護施設の水道代削減｜Heart Bridge",
+        longform=WATER,
         description="介護施設・医療法人向けに水道の基本料金見直しから使用量最適化まで対応。無駄なコストを削減し、経営基盤の強化をサポートします。")
 
 
@@ -386,6 +457,7 @@ def build_labor():
         "導入効果（実績）", [("平均改善率", "15", "%"), ("診断〜提案までの期間", "3", "週間"), ("初期費用", "0", "円")],
         "", "固定費削減コンサル一覧へ戻る", "/cost-reduction/",
         title="医療法人の人件費最適化｜Heart Bridge",
+        longform=LABOR,
         description="社会福祉法人・医療法人の人員配置を見直し、無理のない人件費最適化を実現。現場の負担を増やさないコスト削減プランをご提案します。")
 
 
@@ -402,6 +474,7 @@ def build_office_equipment():
         "導入効果（実績）", [("平均削減率", "18", "%"), ("診断〜提案までの期間", "2", "週間"), ("初期費用", "0", "円")],
         "", "固定費削減コンサル一覧へ戻る", "/cost-reduction/",
         title="複合機・OA機器のコスト削減｜Heart Bridge",
+        longform=OFFICE,
         description="複合機のリース契約見直しやOA機器全般のコスト削減を法人向けにサポート。現状契約を無料診断し、最適なプランをご提案します。")
 
 
@@ -440,6 +513,7 @@ def build_cost_reduction_hub():
     </div>
   </div>
 </section>
+{COST_HUB}
 """
     return page("/cost-reduction/", "固定費削減コンサルティング｜Heart Bridge",
                 "電気代・水道代・人件費・OA機器費まで、医療法人・社会福祉法人の固定費を専門家が無料診断。実績に基づいた経費見直しをワンストップでご提案します。",
@@ -464,7 +538,7 @@ def build_carbonization_hub():
         <div class="biz-card-top"><span class="biz-num">01</span><span class="biz-icon">{icon('sun')}</span></div>
         <h3>乾熱滅菌減量装置</h3>
         <div class="biz-sub-list">
-          <div class="biz-sub-item"><strong>医療産廃対応炭化炉（MD1000型）</strong><p>医療廃棄物・紙おむつ・感染性廃棄物を高温で乾熱滅菌・炭化処理する専用炉。焼却せず炭に変えることで処理コスト削減と有害物質の無害化を同時に実現します。仕様・導入コストの詳細はこちら。</p></div>
+          <div class="biz-sub-item"><strong>医療産廃対応の乾熱滅菌減量装置</strong><p>医療廃棄物・紙おむつ・感染性廃棄物を高温で乾熱滅菌・炭化処理する専用炉。焼却せず炭に変えることで処理コスト削減と有害物質の無害化を同時に実現します。仕様・導入コストの詳細はこちら。</p></div>
         </div>
         <span class="biz-effect">{icon('trend')} 処理コスト削減</span>
       </a>
@@ -483,6 +557,7 @@ def build_carbonization_hub():
     </div>
   </div>
 </section>
+{CARBON_HUB}
 """
     return page("/carbonization/", "炭化炉事業（乾熱滅菌・製炭）｜Heart Bridge",
                 "医療・介護施設向け乾熱滅菌減量装置と、地域資源を活かした製炭事業をご紹介。廃棄物処理のコスト削減と環境負荷軽減を同時に実現します。",
@@ -491,38 +566,40 @@ def build_carbonization_hub():
 
 def build_sterilizer():
     body = f"""
-{mhero("Sterilizer Device", "乾熱滅菌減量装置<br><span style='color:var(--orange)'>（MD1000型）</span>",
-       "紙おむつや感染性廃棄物を乾熱滅菌・減容化する装置です。病院・介護施設の廃棄物処理コストと処理量を大幅に削減します。",
+{mhero("Sterilizer Device", "乾熱滅菌減量装置<br><span style='color:var(--orange)'>病院・介護施設向け</span>",
+       "紙おむつや感染性廃棄物を袋ごと投入し、180〜200℃で乾熱滅菌・減量する装置です。病院・介護施設の廃棄物処理コストと処理量、職員の作業負担を大幅に削減します。",
        CRUMB_TOP + '<a href="/carbonization/">炭化炉事業</a> ／ 乾熱滅菌減量装置',
        '<a class="btn btn-orange" href="/contact/">資料請求はこちら →</a>'
-       '<a class="btn btn-ghost" href="/case-studies/">導入事例を見る</a>')}
+       '<a class="btn btn-ghost" href="/case-studies/">導入実績を見る</a>')}
 <div class="svc-body">
   <div>
-    <h2>MD1000型 製品詳細</h2>
-    <p>医療産廃対応の専用炉で、紙おむつ・感染性廃棄物を焼却せず高温で乾熱滅菌・減容化。処理コスト削減と有害物質の無害化を同時に実現します。</p>
-    <div style="border-radius:var(--r-lg);overflow:hidden;margin-bottom:20px;box-shadow:var(--sh-sm);">
-      <img src="/assets/img/hero.jpg" alt="乾熱滅菌減量装置 MD1000型">
+    <h2>乾熱滅菌減量装置の特長</h2>
+    <p>医療産廃に対応した専用の装置で、紙おむつ・感染性廃棄物を焼却せず高温で乾熱滅菌・減量化。処理コスト削減と安全性の向上を同時に実現します。</p>
+    <div style="border-radius:var(--r-lg);overflow:hidden;margin-bottom:20px;box-shadow:var(--sh-md);">
+      <img src="/assets/img/hero.jpg" alt="乾熱滅菌減量装置">
     </div>
     <div class="svc-feats">
-      <div class="svc-feat">{icon('sun','ic')}<div><b>乾熱滅菌処理</b><span>高温処理により病原菌・感染性廃棄物を安全に無害化します。</span></div></div>
-      <div class="svc-feat">{icon('cycle','ic')}<div><b>大幅な減容化</b><span>処理後は容積・重量が大きく減少し、廃棄コストを削減します。</span></div></div>
-      <div class="svc-feat">{icon('checkcircle','ic')}<div><b>医療産廃に対応</b><span>紙おむつ・感染性廃棄物など医療・介護現場特有の廃棄物に対応します。</span></div></div>
+      <div class="svc-feat">{icon('sun','ic')}<div><b>乾熱滅菌処理</b><span>180〜200℃で30分以上保持し、細部まで確実に滅菌します。</span></div></div>
+      <div class="svc-feat">{icon('cycle','ic')}<div><b>大幅な減量</b><span>処理後は1/5〜1/10に減量し、保管・搬送の負担と廃棄コストを削減します。</span></div></div>
+      <div class="svc-feat">{icon('checkcircle','ic')}<div><b>袋ごと投入可能</b><span>汚物や血液が付着したままでも袋ごと投入でき、排泄物の除去作業は不要です。</span></div></div>
     </div>
   </div>
   <div class="svc-stats">
     <div class="lbl">導入効果（実績）</div>
-    <div class="svc-stat-row"><span class="l">廃棄物容積削減率</span><span class="n">80<sup>%</sup>前後</span></div>
+    <div class="svc-stat-row"><span class="l">処理後の減量率</span><span class="n">1/5〜1/10</span></div>
+    <div class="svc-stat-row"><span class="l">処理温度</span><span class="n">180〜200<sup>℃</sup></span></div>
     <div class="svc-stat-row"><span class="l">設置〜稼働までの期間</span><span class="n">1.5〜2<sup>ヶ月</sup></span></div>
     <div class="svc-stat-row"><span class="l">対応エリア</span><span class="n">全国</span></div>
   </div>
 </div>
+{STERILIZER}
 <div class="svc-cta">
   <a class="btn btn-ghost on-light" href="/carbonization/">炭化炉事業一覧へ戻る</a>
   <a class="btn btn-orange" href="/contact/">お問い合わせ・資料請求</a>
 </div>
 """
-    return page("/carbonization/sterilizer/", "乾熱滅菌減量装置(MD1000型)｜病院・介護施設向け｜Heart Bridge",
-                "紙おむつや感染性廃棄物を乾熱滅菌・減容化するMD1000型装置の仕様・導入コストをご紹介。病院・介護施設の廃棄物処理コストと処理量を大幅に削減します。",
+    return page("/carbonization/sterilizer/", "乾熱滅菌減量装置｜病院・介護施設向け 紙おむつ・感染性廃棄物の処理｜Heart Bridge",
+                "紙おむつや感染性廃棄物を袋ごと投入し、180〜200℃で乾熱滅菌・1/5〜1/10に減量する装置。仕様・処理の流れ・導入までの流れ・価格の目安を詳しくご紹介します。",
                 body)
 
 
@@ -551,6 +628,7 @@ def build_charcoal():
     <div class="svc-stat-row"><span class="l">SDGs該当目標</span><span class="n">8 / 12 / 13</span></div>
   </div>
 </div>
+{CHARCOAL}
 <div class="svc-cta">
   <a class="btn btn-ghost on-light" href="/carbonization/">炭化炉事業一覧へ戻る</a>
   <a class="btn btn-orange" href="/contact/">お問い合わせ・資料請求</a>
@@ -609,6 +687,8 @@ def build_sponsor():
   </div>
 </section>
 
+{SPONSOR}
+
 <section class="sec" style="background:var(--ink);text-align:center;">
   <div class="inner">
     <h2 class="sec-title sec-title-white">まずはお話を聞かせてください</h2>
@@ -649,7 +729,7 @@ def build_case_hub():
     ]
     rows = "".join(record_row(f, p, w) for f, p, w in records)
     body = f"""
-{mhero("Case Studies", "導入実績", "乾熱滅菌減量装置（MD1000型）の導入実績を一部抜粋してご紹介します。全国の病院・介護施設・検査会社等で稼働中です。",
+{mhero("Case Studies", "導入実績", "乾熱滅菌減量装置の導入実績を一部抜粋してご紹介します。全国の病院・介護施設・検査会社等で稼働中です。",
        CRUMB_TOP + "導入事例",
        '<a class="btn btn-orange" href="/contact/">無料相談する →</a>')}
 <section class="sec" style="background:var(--white);">
@@ -671,7 +751,7 @@ def build_case_hub():
 </section>
 """
     return page("/case-studies/", "導入実績｜株式会社Heart Bridge",
-                "乾熱滅菌減量装置（MD1000型）の導入実績を一部抜粋してご紹介します。全国の病院・介護施設・検査会社等で稼働中です。",
+                "乾熱滅菌減量装置の導入実績を一部抜粋してご紹介します。全国の病院・介護施設・検査会社等で稼働中です。",
                 body)
 
 # ---------------------------------------------------------------
@@ -733,7 +813,7 @@ def build_media_press():
 {mhero("Media", "メディア<span style='color:var(--orange)'>掲載情報</span>",
        "テレビ・新聞・Web媒体等でご紹介いただいた株式会社Heart Bridgeの掲載実績をまとめています。",
        CRUMB_TOP + '<a href="/media/">メディア・スポンサー</a> ／ メディア')}
-<section class="sec" style="background:var(--ink);">
+<section class="sec" style="background:var(--warm-bg);">
   <div class="inner"><div class="media-grid">{grid}</div></div>
 </section>
 """
@@ -928,15 +1008,15 @@ def build_contact():
     <div class="contact-form-wrap">
       <form id="contact-form" data-thanks="/contact/thanks/">
         <div class="form-row">
-          <div class="fg"><label>会社名<span class="req">※</span></label><input type="text" id="company" name="company" placeholder="株式会社〇〇" required></div>
-          <div class="fg"><label>お名前<span class="req">※</span></label><input type="text" id="name" name="name" placeholder="山田 太郎" required></div>
+          <div class="fg"><label>会社名<span class="req">必須</span></label><input type="text" id="company" name="company" placeholder="株式会社〇〇" required></div>
+          <div class="fg"><label>お名前<span class="req">必須</span></label><input type="text" id="name" name="name" placeholder="山田 太郎" required></div>
         </div>
         <div class="form-row">
-          <div class="fg"><label>メールアドレス<span class="req">※</span></label><input type="email" id="email" name="email" placeholder="example@company.com" required></div>
+          <div class="fg"><label>メールアドレス<span class="req">必須</span></label><input type="email" id="email" name="email" placeholder="example@company.com" required></div>
           <div class="fg"><label>電話番号</label><input type="tel" id="tel" name="tel" placeholder="06-0000-0000"></div>
         </div>
         <div class="fg">
-          <label>お問い合わせ種別<span class="req">※</span></label>
+          <label>お問い合わせ種別<span class="req">必須</span></label>
           <select id="category" name="category" required>
             <option value="">選択してください</option>
             <option>固定費削減コンサルについて</option>
@@ -946,7 +1026,7 @@ def build_contact():
             <option>その他</option>
           </select>
         </div>
-        <div class="fg"><label>お問い合わせ内容<span class="req">※</span></label><textarea id="message" name="message" placeholder="ご相談内容・ご質問をご記入ください" required></textarea></div>
+        <div class="fg"><label>お問い合わせ内容<span class="req">必須</span></label><textarea id="message" name="message" placeholder="ご相談内容・ご質問をご記入ください" required></textarea></div>
         <button class="btn-submit" type="submit">送信する</button>
       </form>
     </div>
